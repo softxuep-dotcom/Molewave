@@ -29,7 +29,7 @@ export class GameRenderer {
     });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.type = THREE.PCFShadowMap;
+    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.05;
@@ -228,21 +228,22 @@ export class GameRenderer {
   }
 
   private createLights(): void {
-    const hemisphere = new THREE.HemisphereLight(0xc9fff0, 0x173334, 2.35);
+    const hemisphere = new THREE.HemisphereLight(0xc9fff0, 0x173334, 1.7);
     this.scene.add(hemisphere);
 
-    const key = new THREE.DirectionalLight(0xfff0cb, 4.1);
+    const key = new THREE.DirectionalLight(0xfff0cb, 4.8);
     key.position.set(-4.5, 8.5, 6.5);
     key.castShadow = true;
-    key.shadow.mapSize.set(1024, 1024);
+    key.shadow.mapSize.set(2048, 2048);
     key.shadow.camera.left = -6;
     key.shadow.camera.right = 6;
     key.shadow.camera.top = 8;
     key.shadow.camera.bottom = -4;
     key.shadow.bias = -0.0005;
+    key.shadow.normalBias = 0.025;
     this.scene.add(key);
 
-    const fill = new THREE.DirectionalLight(0x73d8d3, 1.2);
+    const fill = new THREE.DirectionalLight(0x73d8d3, 0.75);
     fill.position.set(5, 3, 3);
     this.scene.add(fill);
   }

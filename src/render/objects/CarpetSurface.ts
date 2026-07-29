@@ -15,6 +15,7 @@ export class CarpetSurface {
   private readonly mesh: THREE.Mesh;
   private readonly basePositions: Float32Array;
   private readonly eyes = new THREE.Group();
+  private readonly contactShadow: THREE.Mesh;
 
   constructor() {
     const texture = this.createGridTexture();
@@ -35,6 +36,22 @@ export class CarpetSurface {
     this.mesh.castShadow = true;
     this.group.add(this.mesh);
 
+    const shadowTexture = this.createContactShadowTexture();
+    this.contactShadow = new THREE.Mesh(
+      new THREE.PlaneGeometry(2, 2),
+      new THREE.MeshBasicMaterial({
+        color: 0x123f3d,
+        map: shadowTexture,
+        transparent: true,
+        depthWrite: false,
+        opacity: 0,
+      }),
+    );
+    this.contactShadow.rotation.x = -Math.PI / 2;
+    this.contactShadow.position.y = 0.025;
+    this.contactShadow.renderOrder = 1;
+    this.group.add(this.contactShadow);
+
     const positions = this.geometry.attributes.position.array;
     this.basePositions = new Float32Array(positions.length);
     this.basePositions.set(positions);
@@ -46,10 +63,13 @@ export class CarpetSurface {
   update(bump: BumpSnapshot): void {
     const positions = this.geometry.attributes.position;
     const array = positions.array as Float32Array;
-    const amplitude = Math.max(0, bump.height);
+    const physicalAmplitude = Math.max(0, bump.height);
+    const amplitude = bump.active
+      ? Math.max(0.18, physicalAmplitude * 1.22)
+      : physicalAmplitude;
     const width =
-      bump.primitive === "push" ? 1.24 : bump.primitive === "prop" ? 1.06 : 0.94;
-    const depthScale = bump.primitive === "push" ? 0.68 : 0.78;
+      bump.primitive === "push" ? 1.12 : bump.primitive === "prop" ? 1.02 : 0.9;
+    const depthScale = bump.primitive === "push" ? 0.61 : 0.72;
     const lean =
       bump.primitive === "launch"
         ? bump.direction * 0.14
@@ -82,6 +102,12 @@ export class CarpetSurface {
     this.material.emissive.lerp(targetColor, bump.active ? 0.045 : 0.018);
     this.material.emissiveIntensity = bump.active ? 0.18 : 0.08;
 
+    const shadowMaterial = this.contactShadow.material as THREE.MeshBasicMaterial;
+    shadowMaterial.opacity = bump.active ? Math.min(0.72, 0.24 + amplitude * 0.4) : 0;
+    this.contactShadow.visible = bump.active;
+    this.contactShadow.position.x = bump.x - bump.direction * 0.08;
+    this.contactShadow.scale.set(width * 1.24, depthScale * 1.16, 1);
+
     this.eyes.visible = bump.active && amplitude > 0.08;
     this.eyes.position.set(bump.x, Math.max(0.07, amplitude * 0.62), 0.74);
     this.eyes.rotation.z =
@@ -92,6 +118,9 @@ export class CarpetSurface {
     this.geometry.dispose();
     this.material.map?.dispose();
     this.material.dispose();
+    this.contactShadow.geometry.dispose();
+    (this.contactShadow.material as THREE.MeshBasicMaterial).map?.dispose();
+    (this.contactShadow.material as THREE.MeshBasicMaterial).dispose();
   }
 
   private createGridTexture(): THREE.CanvasTexture {
@@ -133,6 +162,27 @@ export class CarpetSurface {
     texture.repeat.set(3.5, 1.4);
     texture.colorSpace = THREE.SRGBColorSpace;
     texture.anisotropy = 4;
+    return texture;
+  }
+
+  private createContactShadowTexture(): THREE.CanvasTexture {
+    const canvas = document.createElement("canvas");
+    canvas.width = 128;
+    canvas.height = 128;
+    const context = canvas.getContext("2d");
+    if (!context) {
+      throw new Error("Canvas 2D context unavailable");
+    }
+
+    const gradient = context.createRadialGradient(64, 64, 8, 64, 64, 64);
+    gradient.addColorStop(0, "rgba(255, 255, 255, 0.92)");
+    gradient.addColorStop(0.48, "rgba(255, 255, 255, 0.45)");
+    gradient.addColorStop(1, "rgba(255, 255, 255, 0)");
+    context.fillStyle = gradient;
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.colorSpace = THREE.SRGBColorSpace;
     return texture;
   }
 
