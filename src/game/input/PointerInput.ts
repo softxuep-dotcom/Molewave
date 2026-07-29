@@ -3,6 +3,7 @@ import type { Primitive } from "../content/levels";
 export interface InputIntent {
   active: boolean;
   xNorm: number;
+  xWorld: number;
   height: number;
   velocityWps: number;
   direction: -1 | 0 | 1;
@@ -18,6 +19,7 @@ export class PointerInput {
   private enabled = true;
   private pointerId: number | null = null;
   private xNorm = -0.65;
+  private xWorld = -2.2;
   private height = 0.12;
   private filteredVelocity = 0;
   private lastSampleX = 0;
@@ -87,6 +89,7 @@ export class PointerInput {
     return {
       active: this.active,
       xNorm: this.xNorm,
+      xWorld: this.xWorld,
       height: this.height,
       velocityWps: this.filteredVelocity,
       direction,
@@ -170,6 +173,13 @@ export class PointerInput {
     const bounds = this.element.getBoundingClientRect();
     const x01 = clamp((clientX - bounds.left) / Math.max(1, bounds.width), 0, 1);
     this.xNorm = x01 * 2 - 1;
+
+    const viewportWidth = Math.max(1, window.innerWidth);
+    const viewportHeight = Math.max(1, window.innerHeight);
+    const aspect = viewportWidth / viewportHeight;
+    const viewWidth = aspect < 1 ? 8.25 : 8.2 * aspect;
+    const portraitOpticalOffset = aspect < 1 ? 6 : 0;
+    this.xWorld = ((clientX - portraitOpticalOffset) / viewportWidth - 0.5) * viewWidth;
 
     const liftRange = Math.max(130, Math.min(280, bounds.height * 0.86));
     const upwardTravel = Math.max(0, this.startY - clientY);

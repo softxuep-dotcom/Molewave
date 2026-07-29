@@ -12,6 +12,7 @@ const FIXED_DT = 1 / 60;
 const inactiveIntent: InputIntent = {
   active: false,
   xNorm: -0.65,
+  xWorld: -2.2,
   height: 0.12,
   velocityWps: 0,
   direction: 0,
@@ -170,6 +171,8 @@ async function bootstrap(): Promise<void> {
       (snapshot) => snapshot.id === director.currentLevel.success.toyId,
     );
     gameShell.dataset.level = String(director.currentLevelIndex + 1);
+    gameShell.dataset.bumpX = bump.x.toFixed(3);
+    gameShell.dataset.inputX = intent.xWorld.toFixed(3);
     gameShell.dataset.toyX = trackedToy?.position.x.toFixed(3) ?? "";
     gameShell.dataset.toyY = trackedToy?.position.y.toFixed(3) ?? "";
     const plankSnapshot = snapshots.find((snapshot) => snapshot.id === "plank");

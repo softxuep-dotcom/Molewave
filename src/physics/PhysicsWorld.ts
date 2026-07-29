@@ -29,9 +29,7 @@ interface ToyRuntime {
 
 const FIXED_DT = 1 / 60;
 const BUMP_RADIUS = 1.02;
-// Convert the gesture zone's screen position to the carpet's visible width.
-// The bump itself stays inside the rails instead of allowing its collider to clip through them.
-const INPUT_HALF_WIDTH = 4.08;
+// Keep the bump collider inside the rails while the input itself tracks screen/world position.
 const BUMP_CENTER_LIMIT = 2.72;
 
 const moveToward = (value: number, target: number, maxDelta: number): number => {
@@ -249,7 +247,7 @@ export class PhysicsWorld {
 
   private updateBump(input: InputIntent): void {
     if (input.active && !this.bumpWasActive) {
-      this.bumpX = this.inputToBumpX(input.xNorm);
+      this.bumpX = this.clampBumpX(input.xWorld);
       this.bumpY = -0.83;
       this.activationProgress = 1;
     }
@@ -260,7 +258,7 @@ export class PhysicsWorld {
       const eased = this.activationProgress * this.activationProgress * (3 - 2 * this.activationProgress);
       const activeY = -0.92 + input.height * 0.9;
       desiredY = -1.58 + (activeY + 1.58) * eased;
-      const desiredX = this.inputToBumpX(input.xNorm);
+      const desiredX = this.clampBumpX(input.xWorld);
       this.bumpX = moveToward(this.bumpX, desiredX, 13.5 * FIXED_DT);
     } else {
       this.activationProgress = 0;
@@ -347,7 +345,7 @@ export class PhysicsWorld {
     }
   }
 
-  private inputToBumpX(xNorm: number): number {
-    return Math.max(-BUMP_CENTER_LIMIT, Math.min(BUMP_CENTER_LIMIT, xNorm * INPUT_HALF_WIDTH));
+  private clampBumpX(xWorld: number): number {
+    return Math.max(-BUMP_CENTER_LIMIT, Math.min(BUMP_CENTER_LIMIT, xWorld));
   }
 }

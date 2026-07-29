@@ -66,6 +66,7 @@ export class AutoPilot {
     return {
       active,
       xNorm,
+      xWorld: xNorm * 4.08,
       height,
       velocityWps,
       direction: velocityWps > 0 ? 1 : velocityWps < 0 ? -1 : 0,
@@ -78,6 +79,7 @@ export class AutoPilot {
     return {
       active: false,
       xNorm: 0,
+      xWorld: 0,
       height: 0.12,
       velocityWps: 0,
       direction: 0,
