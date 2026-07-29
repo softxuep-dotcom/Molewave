@@ -27,7 +27,7 @@ export class AutoPilot {
       return this.intent(true, -0.86, 0.18, 0, "push", elapsed);
     }
     if (elapsed < 9 && toyX < 1.5) {
-      const followX = Math.min(0.78, Math.max(-0.92, (toyX - 0.52) / 3.25));
+      const followX = Math.min(0.67, Math.max(-0.8, (toyX - 0.52) / 4.08));
       return this.intent(true, followX, 0.18, 0.22, "push", elapsed);
     }
     return this.inactive();

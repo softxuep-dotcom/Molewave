@@ -70,13 +70,7 @@ export class CarpetSurface {
     const width =
       bump.primitive === "push" ? 1.12 : bump.primitive === "prop" ? 1.02 : 0.9;
     const depthScale = bump.primitive === "push" ? 0.61 : 0.72;
-    const lean =
-      bump.primitive === "launch"
-        ? bump.direction * 0.14
-        : bump.primitive === "push"
-          ? bump.direction * 0.05
-          : 0;
-    const centerX = bump.x + lean;
+    const centerX = bump.x;
 
     for (let index = 0; index < array.length; index += 3) {
       const x = this.basePositions[index];
@@ -105,7 +99,7 @@ export class CarpetSurface {
     const shadowMaterial = this.contactShadow.material as THREE.MeshBasicMaterial;
     shadowMaterial.opacity = bump.active ? Math.min(0.72, 0.24 + amplitude * 0.4) : 0;
     this.contactShadow.visible = bump.active;
-    this.contactShadow.position.x = bump.x - bump.direction * 0.08;
+    this.contactShadow.position.x = bump.x;
     this.contactShadow.scale.set(width * 1.24, depthScale * 1.16, 1);
 
     this.eyes.visible = bump.active && amplitude > 0.08;
