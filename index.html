@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta name="theme-color" content="#173a3c" />
+    <meta name="description" content="Molewave — 单指操控连续地毯鼓包的 3D 物理游戏原型" />
+    <title>Molewave · 地毯鼓包</title>
+  </head>
+  <body>
+    <main id="app" aria-label="Molewave 游戏">
+      <section id="game-shell">
+        <div id="canvas-host" aria-hidden="true"></div>
+
+        <header id="hud" aria-label="游戏状态">
+          <div class="level-cluster">
+            <span id="level-label">01 / 03</span>
+            <div id="level-pips" aria-label="关卡进度">
+              <i class="pip active"></i>
+              <i class="pip"></i>
+              <i class="pip"></i>
+            </div>
+          </div>
+          <div class="hud-actions">
+            <button id="reset-button" class="icon-button" type="button" aria-label="重新开始当前关卡" title="重置（R）">
+              ↻
+            </button>
+            <button id="pause-button" class="icon-button" type="button" aria-label="暂停游戏" title="暂停（Esc）">
+              Ⅱ
+            </button>
+          </div>
+        </header>
+
+        <div id="verb-chip" data-verb="push" aria-live="polite">
+          <span id="verb-symbol">↔</span>
+          <span id="verb-label">滑推</span>
+        </div>
+
+        <div id="feedback" role="status" aria-live="polite"></div>
+
+        <div id="ghost-guide" aria-hidden="true">
+          <span class="ghost-finger"></span>
+          <span class="ghost-trail"></span>
+        </div>
+
+        <div
+          id="gesture-zone"
+          role="application"
+          tabindex="0"
+          aria-label="按住并拖动来控制地毯下的鼹鼠。横向拖动改变位置，向上拖动升高鼓包。"
+        ></div>
+
+        <aside id="diagnostics" hidden>
+          <span id="diag-fps">60 FPS</span>
+          <span id="diag-input">vx 0.00 · h 0.00</span>
+        </aside>
+
+        <div id="pause-overlay" class="overlay" hidden>
+          <div class="overlay-card">
+            <span class="mole-mark" aria-hidden="true">••</span>
+            <h1 id="overlay-title">暂停</h1>
+            <p id="overlay-copy">地毯下的小家伙正在等你。</p>
+            <button id="resume-button" class="primary-button" type="button">继续</button>
+            <button id="restart-button" class="secondary-button" type="button" hidden>从头再玩</button>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
