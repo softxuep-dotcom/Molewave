@@ -56,6 +56,7 @@ async function bootstrap(): Promise<void> {
     physics.loadLevel(level);
     gameRenderer.loadLevel(level);
     hud.setLevel(director.currentLevelIndex, levels.length);
+    hud.setMission(level);
     input.setEnabled(!paused && director.acceptsInput);
   };
 

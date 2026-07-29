@@ -54,6 +54,10 @@ export interface LevelDefinition {
   slug: "push-home" | "prop-ramp" | "launch-wall";
   accent: number;
   expectedPrimitive: Primitive;
+  instruction: {
+    title: string;
+    copy: string;
+  };
   target: TargetSpec;
   toys: ToySpec[];
   obstacles: ObstacleSpec[];
@@ -69,6 +73,10 @@ export const levels: LevelDefinition[] = [
     slug: "push-home",
     accent: 0x76dfc2,
     expectedPrimitive: "push",
+    instruction: {
+      title: "滑推 · 把箱子送进光格",
+      copy: "在画面下方按住，保持低位向右拖动。先完成这一关，后两种动作才会登场。",
+    },
     target: {
       position: { x: 2.35, y: 0.025, z: 0 },
       size: { x: 1.45, y: 0.05, z: 1.35 },
@@ -101,6 +109,10 @@ export const levels: LevelDefinition[] = [
     slug: "prop-ramp",
     accent: 0xffd166,
     expectedPrimitive: "prop",
+    instruction: {
+      title: "顶撑 · 抬起木板左端",
+      copy: "在木板左端下方按住后向上提，并停住；等小球沿斜坡滚进右侧光格。",
+    },
     target: {
       position: { x: 2.75, y: 0.025, z: 0 },
       size: { x: 1.05, y: 0.05, z: 1.35 },
@@ -164,6 +176,10 @@ export const levels: LevelDefinition[] = [
     slug: "launch-wall",
     accent: 0xff7b70,
     expectedPrimitive: "launch",
+    instruction: {
+      title: "掀射 · 让球越过矮墙",
+      copy: "在球下方按住并上提，再向右快速横扫。松手后观察小球落入右侧光格。",
+    },
     target: {
       position: { x: 2.45, y: 0.025, z: 0 },
       size: { x: 1.55, y: 0.05, z: 1.35 },

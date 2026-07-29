@@ -1,4 +1,4 @@
-import type { Primitive } from "../game/content/levels";
+import type { LevelDefinition, Primitive } from "../game/content/levels";
 
 interface HudCallbacks {
   onReset: () => void;
@@ -23,6 +23,8 @@ const requireElement = <T extends HTMLElement>(selector: string): T => {
 
 export class Hud {
   private readonly levelLabel = requireElement<HTMLSpanElement>("#level-label");
+  private readonly missionTitle = requireElement<HTMLSpanElement>("#mission-title");
+  private readonly missionCopy = requireElement<HTMLParagraphElement>("#mission-copy");
   private readonly pips = [...document.querySelectorAll<HTMLElement>(".pip")];
   private readonly verbChip = requireElement<HTMLDivElement>("#verb-chip");
   private readonly verbSymbol = requireElement<HTMLSpanElement>("#verb-symbol");
@@ -65,11 +67,16 @@ export class Hud {
     });
   }
 
+  setMission(level: LevelDefinition): void {
+    this.missionTitle.textContent = level.instruction.title;
+    this.missionCopy.textContent = level.instruction.copy;
+  }
+
   setPrimitive(primitive: Primitive, active: boolean): void {
     const meta = primitiveMeta[primitive];
     this.verbChip.dataset.verb = primitive;
     this.verbSymbol.textContent = meta.symbol;
-    this.verbLabel.textContent = meta.label;
+    this.verbLabel.textContent = `识别：${meta.label}`;
     this.verbChip.classList.toggle("visible", active);
   }
 

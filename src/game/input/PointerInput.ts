@@ -25,6 +25,8 @@ export class PointerInput {
   private startedAt = 0;
   private startY = 0;
   private primitive: Primitive = "push";
+  private lastSpecialPrimitive: Primitive = "push";
+  private lastSpecialAt = 0;
   private lastActivity = performance.now();
 
   constructor(
@@ -61,10 +63,20 @@ export class PointerInput {
     const holdMs = this.active ? now - this.startedAt : 0;
     const speed = Math.abs(this.filteredVelocity);
 
-    if (this.active && this.height >= 0.34 && speed > 1.04) {
-      this.primitive = "launch";
-    } else if (this.active && this.height >= 0.32 && speed < 0.09 && holdMs > 180) {
-      this.primitive = "prop";
+    let candidate: Primitive = "push";
+    if (this.active && this.height >= 0.3 && speed > 0.78) {
+      candidate = "launch";
+    } else if (this.active && this.height >= 0.29 && speed < 0.16 && holdMs > 140) {
+      candidate = "prop";
+    }
+
+    if (candidate !== "push") {
+      this.lastSpecialPrimitive = candidate;
+      this.lastSpecialAt = now;
+      this.primitive = candidate;
+    } else if (this.active && now - this.lastSpecialAt < 260) {
+      // Preserve a recognised lift or flick long enough for players to see it.
+      this.primitive = this.lastSpecialPrimitive;
     } else {
       this.primitive = "push";
     }
@@ -92,6 +104,7 @@ export class PointerInput {
     this.active = false;
     this.filteredVelocity = 0;
     this.height = 0.12;
+    this.lastSpecialPrimitive = "push";
   }
 
   destroy(): void {

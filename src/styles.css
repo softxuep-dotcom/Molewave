@@ -103,6 +103,38 @@ button {
   gap: 6px;
 }
 
+#mission {
+  position: absolute;
+  z-index: 8;
+  top: max(78px, calc(env(safe-area-inset-top) + 66px));
+  left: 50%;
+  width: min(430px, 74vw);
+  padding: 10px 15px 11px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 14px;
+  color: #f8f4dd;
+  background: rgba(13, 54, 52, 0.74);
+  box-shadow: 0 10px 28px rgba(5, 30, 29, 0.19);
+  text-align: center;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+#mission-title {
+  display: block;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0.07em;
+}
+
+#mission-copy {
+  margin: 5px 0 0;
+  color: rgba(248, 244, 221, 0.86);
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.45;
+}
+
 .pip {
   width: 7px;
   height: 7px;
